@@ -54,6 +54,7 @@ interface AppContextType {
   activeRole: UserRole;
   setActiveRole: (role: UserRole) => void;
   loginAsRole: (role: UserRole) => void;
+  login: (email: string, password?: string) => boolean;
   registerUser: (userData: Partial<User>) => void;
   updateUserProfile: (updates: Partial<User>) => void;
   submitKycDocument: (type: KYCDocument['type'], name: string) => void;
@@ -117,22 +118,41 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [activeRole, setActiveRoleState] = useState<UserRole>('client');
-  const [currentUser, setCurrentUser] = useState<User | null>(MOCK_USERS['client'] || null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>(Object.values(MOCK_USERS));
 
   const setActiveRole = (role: UserRole) => {
     setActiveRoleState(role);
-    if (MOCK_USERS[role]) {
-      setCurrentUser(MOCK_USERS[role]);
-    }
   };
 
   const loginAsRole = (role: UserRole) => {
     setActiveRoleState(role);
-    if (MOCK_USERS[role]) {
-      setCurrentUser(MOCK_USERS[role]);
-      showToast(`Connecté en tant que ${MOCK_USERS[role].name} (${role.toUpperCase()})`, 'success');
+    if (role === 'admin' && MOCK_USERS['admin']) {
+      setCurrentUser(MOCK_USERS['admin']);
+      showToast('Connecté en tant que Super Administrateur.', 'success');
     }
+  };
+
+  const login = (email: string, password?: string): boolean => {
+    const trimmedEmail = email.toLowerCase().trim();
+    const found = allUsers.find((u) => u.email.toLowerCase() === trimmedEmail);
+    if (found) {
+      setCurrentUser(found);
+      setActiveRoleState(found.role);
+      showToast(`Connexion réussie ! Bienvenue, ${found.name}.`, 'success');
+      return true;
+    }
+    if (trimmedEmail === 'admin@gabwork.com' || trimmedEmail === 'admin@gab.com') {
+      const admin = MOCK_USERS['admin'];
+      if (admin) {
+        setCurrentUser(admin);
+        setActiveRoleState('admin');
+        showToast('Connecté en tant que Super Administrateur.', 'success');
+        return true;
+      }
+    }
+    showToast(`Aucun compte trouvé avec l'adresse "${email}". Veuillez créer un compte.`, 'warning');
+    return false;
   };
 
   const registerUser = (userData: Partial<User>) => {
@@ -171,6 +191,63 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setCurrentUser(newUser);
     setAllUsers((prev) => [newUser, ...prev]);
     setActiveRoleState(role);
+
+    // If registered as worker, also add to workers list so they appear in workers directory
+    if (role === 'worker') {
+      const newWorker: WorkerProfile = {
+        id: 'w-' + newUser.id,
+        userId: newUser.id,
+        name: newUser.name,
+        trade: newUser.trade || 'Artisan Spécialisé BTP',
+        avatar: newUser.avatar,
+        country: newUser.country,
+        countryName: newUser.country === 'GH' ? 'Ghana' : newUser.country,
+        city: newUser.city,
+        experienceYears: newUser.experienceYears || 1,
+        rating: 5.0,
+        reviewCount: 0,
+        availability: 'Available now',
+        availabilityStatus: 'AVAILABLE',
+        dailyRateGHS: newUser.dailyRateGHS || 150,
+        hourlyRateGHS: Math.round((newUser.dailyRateGHS || 150) / 8),
+        verified: false,
+        verificationBadge: 'En cours de vérification',
+        skills: [newUser.trade || 'Gros Œuvre'],
+        about: newUser.bio || 'Professionnel qualifié nouvellement inscrit sur GAB-work.',
+        workExperience: [],
+        certifications: [],
+        portfolioPhotos: [],
+        completedProjectsCount: 0,
+        travelReady: true,
+        internationalAvailability: false,
+        languages: ['Français', 'English']
+      };
+      setWorkers((prev) => [newWorker, ...prev]);
+    }
+
+    // If registered as company, also add to companies list
+    if (role === 'company') {
+      const newCompany: Company = {
+        id: 'cmp-' + newUser.id,
+        name: newUser.companyName || newUser.name,
+        tagline: 'Entreprise de construction générale & BTP',
+        logo: newUser.avatar,
+        verified: false,
+        country: newUser.country,
+        city: newUser.city,
+        employeesCount: 10,
+        yearsInBusiness: newUser.experienceYears || 2,
+        services: [newUser.trade || 'Construction & Génie Civil'],
+        completedProjectsCount: 0,
+        activeJobsCount: 0,
+        rating: 5.0,
+        reviewsCount: 0,
+        certifications: [],
+        about: newUser.bio || 'Entreprise générale BTP certifiée inscrite sur GAB-work.'
+      };
+      setCompanies((prev) => [newCompany, ...prev]);
+    }
+
     supabaseService.saveUser(newUser);
     showToast(`Compte créé avec succès ! Bienvenue sur GAB-work, ${newUser.name}.`, 'success');
   };
@@ -506,6 +583,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         activeRole,
         setActiveRole,
         loginAsRole,
+        login,
         registerUser,
         updateUserProfile,
         submitKycDocument,

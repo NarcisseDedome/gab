@@ -702,167 +702,26 @@ export const MOCK_APPLICATIONS: Application[] = [
 ];
 
 export const MOCK_USERS: Record<string, User> = {
-  client: {
-    id: 'u-client-1',
-    name: 'Dr. Samuel Mensah',
-    email: 's.mensah@gh-invest.org',
-    phone: '+233 24 456 7890',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-    role: 'client',
-    country: 'GH',
-    city: 'East Legon, Accra',
-    verifiedStatus: 'VERIFIED',
-    joinedDate: 'Jan 2025',
-    bio: 'Directeur de projets immobiliers résidentiels et hôteliers entre Accra et la diaspora européenne. Investisseur actif sur des chantiers sécurisés via séquestre GAB-work.',
-    completionRate: 95,
-    address: 'East Legon Residential Area, Accra',
-    kycDocuments: [
-      {
-        id: 'doc-c1',
-        type: 'ID_CARD',
-        name: 'Ghana Card (National ID)',
-        status: 'APPROVED',
-        uploadedAt: '2025-01-12'
-      },
-      {
-        id: 'doc-c2',
-        type: 'OTHER',
-        name: 'Attestation de Titre Foncier (Land Title)',
-        status: 'APPROVED',
-        uploadedAt: '2025-02-04'
-      }
-    ]
-  },
-  worker: {
-    id: 'u-101',
-    name: 'Kwame Mensah',
-    email: 'kwame.mensah@gabwork.pro',
-    phone: '+233 20 891 2345',
-    avatar: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=400&auto=format&fit=crop&q=80',
-    role: 'worker',
-    country: 'GH',
-    city: 'Accra, Greater Accra',
-    verifiedStatus: 'VERIFIED',
-    joinedDate: 'Mar 2024',
-    bio: 'Maçon qualifié & Chef d’équipe certifié NVTI Classe I avec 9 ans d’expérience en gros œuvre, fondations et coulage de béton armé.',
-    completionRate: 100,
-    trade: 'Maçon & Spécialiste Gros Œuvre',
-    experienceYears: 9,
-    dailyRateGHS: 220,
-    availabilityStatus: 'AVAILABLE',
-    address: 'Tema Community 4, Greater Accra',
-    kycDocuments: [
-      {
-        id: 'doc-w1',
-        type: 'ID_CARD',
-        name: 'Ghana Card GHA-712849102-1',
-        status: 'APPROVED',
-        uploadedAt: '2024-03-10'
-      },
-      {
-        id: 'doc-w2',
-        type: 'TRADE_CERTIFICATE',
-        name: 'Certificat NVTI Master Mason Class I',
-        status: 'APPROVED',
-        uploadedAt: '2024-03-15'
-      },
-      {
-        id: 'doc-w3',
-        type: 'OTHER',
-        name: 'Attestation Sécurité Chantier OSHA Level 2',
-        status: 'APPROVED',
-        uploadedAt: '2024-05-20'
-      }
-    ]
-  },
-  company: {
-    id: 'c-1',
-    name: 'Emmanuel Quaye',
-    companyName: 'BuildCorp West Africa Ltd',
-    email: 'contact@buildcorp-wa.com',
-    phone: '+233 30 278 9100',
-    avatar: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&auto=format&fit=crop&q=80',
-    role: 'company',
-    country: 'GH',
-    city: 'Airport Residential Area, Accra',
-    verifiedStatus: 'VERIFIED',
-    joinedDate: 'Aug 2023',
-    bio: 'Entreprise générale de BTP de premier plan spécialisée en ouvrages d’art, complexes résidentiels haut de gamme et génie civil en Afrique de l’Ouest.',
-    completionRate: 90,
-    registrationNumber: 'CS198422019 / TIN: C0004918239',
-    experienceYears: 12,
-    website: 'https://buildcorp-wa.com',
-    address: 'Plot 44, Airport Bypass Road, Accra',
-    kycDocuments: [
-      {
-        id: 'doc-cmp1',
-        type: 'BUSINESS_REGISTRATION',
-        name: 'Certificat d’Immatriculation RCCM & TIN',
-        status: 'APPROVED',
-        uploadedAt: '2023-08-15'
-      },
-      {
-        id: 'doc-cmp2',
-        type: 'INSURANCE',
-        name: 'Police d’Assurance Décennale & Responsabilité Civile',
-        status: 'APPROVED',
-        uploadedAt: '2024-01-10'
-      }
-    ]
-  },
-  sitemanager: {
-    id: 'sm-1',
-    name: 'Abena Osei',
-    email: 'abena.osei@gabwork-inspect.com',
-    phone: '+233 26 312 9876',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
-    role: 'sitemanager',
-    country: 'GH',
-    city: 'Tema / Accra',
-    verifiedStatus: 'VERIFIED',
-    joinedDate: 'Nov 2024',
-    bio: 'Ingénieure en génie civil et conductrice de travaux assermentée. Supervise la conformité technique, les journaux de chantier quotidiens et les audits de jalons pour GAB-work.',
-    completionRate: 95,
-    trade: 'Ingénieure Travaux & Auditrice BTP',
-    experienceYears: 7,
-    availabilityStatus: 'AVAILABLE',
-    kycDocuments: [
-      {
-        id: 'doc-sm1',
-        type: 'ID_CARD',
-        name: 'Ghana Card GHA-9082341-8',
-        status: 'APPROVED',
-        uploadedAt: '2024-11-05'
-      },
-      {
-        id: 'doc-sm2',
-        type: 'TRADE_CERTIFICATE',
-        name: 'Diplôme d’Ingénieur Civil (KNUST) & Licence GhIE',
-        status: 'APPROVED',
-        uploadedAt: '2024-11-10'
-      }
-    ]
-  },
   admin: {
     id: 'adm-1',
-    name: 'Marc Dossou',
-    email: 'admin.trust@gabwork.com',
+    name: 'Marc Dossou (Super Admin)',
+    email: 'admin@gabwork.com',
     phone: '+233 30 000 0001',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
     role: 'admin',
     country: 'GH',
     city: 'Accra',
     verifiedStatus: 'VERIFIED',
-    joinedDate: 'Jan 2023',
-    bio: 'Responsable Conformité, Sécurité Escrow & Audit des Dossiers KYC sur GAB-work.',
+    joinedDate: 'Jan 2026',
+    bio: 'Super Administrateur & Auditeur KYC de la plateforme souveraine GAB-work.',
     completionRate: 100,
     kycDocuments: [
       {
         id: 'doc-adm1',
         type: 'ID_CARD',
-        name: 'Passeport & Mandat Administrateur GAB-work',
+        name: 'Mandat & Habilitation Super Administrateur GAB-work',
         status: 'APPROVED',
-        uploadedAt: '2023-01-01'
+        uploadedAt: '2026-01-01'
       }
     ]
   }
