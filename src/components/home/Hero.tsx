@@ -93,21 +93,21 @@ export const Hero: React.FC = () => {
                 
                 <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
                   <Badge variant="VERIFIED" size="sm" className="bg-white text-[#17324D] shadow-md border-0 text-[10px] sm:text-xs">
-                    VERIFIED BTP PROJECT
+                    {t.heroVerifiedTag}
                   </Badge>
                 </div>
 
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-lg bg-[#17324D]/90 backdrop-blur-md border border-white/10 text-white space-y-1.5">
                   <div className="flex justify-between items-center text-xs text-slate-300">
                     <span className="font-semibold text-white truncate mr-2">East Legon Villa Development</span>
-                    <span className="text-[#16805C] font-bold shrink-0">78% Progress</span>
+                    <span className="text-[#16805C] font-bold shrink-0">78% {t.heroProgress}</span>
                   </div>
                   <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
                     <div className="bg-[#16805C] h-full w-[78%]" />
                   </div>
                   <div className="flex justify-between items-center text-[10px] sm:text-[11px] text-slate-400 pt-1">
-                    <span>17 Active Workers</span>
-                    <span>Budget: GHS 220,000</span>
+                    <span>17 {t.heroActiveWorkers}</span>
+                    <span>{t.heroBudget}: GHS 220,000</span>
                   </div>
                 </div>
               </div>

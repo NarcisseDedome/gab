@@ -140,10 +140,51 @@ export interface TranslationDictionary {
   platformHeader: string;
   headquartersHeader: string;
   copyright: string;
+
+  // Navigation & Auth
+  home: string;
+  login: string;
+  register: string;
+  myProfile: string;
+  logout: string;
+  verificationCenter: string;
+  resolutionCenter: string;
+  escrowAndFees: string;
+  termsOfService: string;
+  privacyPolicy: string;
+  securityAudit: string;
+  stepVerified: string;
+  heroProgress: string;
+  heroActiveWorkers: string;
+  heroBudget: string;
+  heroVerifiedTag: string;
+  zeroFraud: string;
+  disputeRateLow: string;
+  platformFeesNote: string;
 }
 
 export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
   en: {
+    home: "Home",
+    login: "Login",
+    register: "Register",
+    myProfile: "My Profile",
+    logout: "Log Out",
+    verificationCenter: "Verification Center",
+    resolutionCenter: "Resolution Center",
+    escrowAndFees: "Escrow & Commissions",
+    termsOfService: "Terms of Service",
+    privacyPolicy: "Privacy Policy",
+    securityAudit: "Security Audit",
+    stepVerified: "Step Verified",
+    heroProgress: "Progress",
+    heroActiveWorkers: "Active Workers",
+    heroBudget: "Budget",
+    heroVerifiedTag: "VERIFIED BTP PROJECT",
+    zeroFraud: "0% Fraud",
+    disputeRateLow: "Milestone Dispute Rate < 0.2%",
+    platformFeesNote: "* Platform fees cover escrow custody, site verification support, dispute arbitration, and digital contract execution.",
+
     topNotice: "Ghana & West Africa's Premier Verified Construction Marketplace",
     findJobs: "Find Jobs",
     findWorkers: "Find Workers",
@@ -273,6 +314,26 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     copyright: "All rights reserved. Build. Work. Connect. Trust.",
   },
   fr: {
+    home: "Accueil",
+    login: "Connexion",
+    register: "S'inscrire",
+    myProfile: "Mon Profil",
+    logout: "Déconnexion",
+    verificationCenter: "Centre de Vérification BTP",
+    resolutionCenter: "Centre d'Arbitrage des Litiges",
+    escrowAndFees: "Séquestre Escrow & Commissions",
+    termsOfService: "Conditions Générales d'Utilisation",
+    privacyPolicy: "Politique de Confidentialité",
+    securityAudit: "Audit & Sécurité",
+    stepVerified: "Étape Vérifiée",
+    heroProgress: "Avancement",
+    heroActiveWorkers: "Ouvriers Actifs",
+    heroBudget: "Budget Alloué",
+    heroVerifiedTag: "PROJET BTP CERTIFIÉ",
+    zeroFraud: "0% Fraude",
+    disputeRateLow: "Taux de litige par jalon < 0,2%",
+    platformFeesNote: "* Les frais de plateforme couvrent la gestion sous séquestre, la vérification physique sur chantier, l'arbitrage des litiges et les contrats numériques certifiés.",
+
     topNotice: "Première Marketplace BTP Vérifiée au Ghana et en Afrique de l'Ouest",
     findJobs: "Trouver un Emploi",
     findWorkers: "Trouver des Ouvriers",
@@ -402,6 +463,26 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     copyright: "Tous droits réservés. Build. Work. Connect. Trust.",
   },
   es: {
+    home: "Inicio",
+    login: "Iniciar Sesión",
+    register: "Registrarse",
+    myProfile: "Mi Perfil",
+    logout: "Cerrar Sesión",
+    verificationCenter: "Centro de Verificación BTP",
+    resolutionCenter: "Centro de Resolución de Conflictos",
+    escrowAndFees: "Depósito en Custodia y Comisiones",
+    termsOfService: "Términos del Servicio",
+    privacyPolicy: "Política de Privacidad",
+    securityAudit: "Auditoría de Seguridad",
+    stepVerified: "Paso Verificado",
+    heroProgress: "Progreso",
+    heroActiveWorkers: "Trabajadores Activos",
+    heroBudget: "Presupuesto",
+    heroVerifiedTag: "PROYECTO BTP VERIFICADO",
+    zeroFraud: "0% Fraude",
+    disputeRateLow: "Tasa de conflicto por hito < 0.2%",
+    platformFeesNote: "* Las tarifas cubren la custodia en depósito, verificación en obra, resolución de disputas y ejecución contractual digital.",
+
     topNotice: "El Mercado de Construcción Verificado Líder en Ghana y África Occidental",
     findJobs: "Buscar Empleo",
     findWorkers: "Buscar Trabajadores",
@@ -531,6 +612,26 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     copyright: "Todos los derechos reservados. Build. Work. Connect. Trust.",
   },
   de: {
+    home: "Startseite",
+    login: "Anmelden",
+    register: "Registrieren",
+    myProfile: "Mein Profil",
+    logout: "Abmelden",
+    verificationCenter: "Verifizierungszentrum BTP",
+    resolutionCenter: "Schlichtungszentrum für Konflikte",
+    escrowAndFees: "Treuhand & Provisionen",
+    termsOfService: "Nutzungsbedingungen",
+    privacyPolicy: "Datenschutzrichtlinie",
+    securityAudit: "Sicherheitsprüfung",
+    stepVerified: "Schritt Verifiziert",
+    heroProgress: "Fortschritt",
+    heroActiveWorkers: "Aktive Handwerker",
+    heroBudget: "Budget",
+    heroVerifiedTag: "GEPRÜFTES BTP-PROJEKT",
+    zeroFraud: "0% Betrug",
+    disputeRateLow: "Streitquote pro Meilenstein < 0,2%",
+    platformFeesNote: "* Plattformgebühren decken Treuhandverwahrung, Vor-Ort-Verifizierung, Streitbeilegung und digitale Verträge ab.",
+
     topNotice: "Deutschlands & Westafrikas führender verifizierter Bau-Marktplatz",
     findJobs: "Stellen Finden",
     findWorkers: "Fachkräfte Finden",

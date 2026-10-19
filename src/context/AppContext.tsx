@@ -2,7 +2,10 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import {
+  User,
+  KYCDocument,
   UserRole,
+  VerificationStatus,
   CountryCode,
   CurrencyCode,
   WorkerProfile,
@@ -21,6 +24,7 @@ import {
 } from '../types';
 import { LanguageCode, TranslationDictionary, TRANSLATIONS } from '../i18n/translations';
 import {
+  MOCK_USERS,
   MOCK_WORKERS,
   MOCK_COMPANIES,
   MOCK_JOBS,
@@ -35,6 +39,7 @@ import {
   MOCK_AUDIT_LOGS,
   MOCK_APPLICATIONS
 } from '../mock/data';
+import { supabaseService } from '../lib/supabaseService';
 
 interface NotificationToast {
   id: string;
@@ -43,8 +48,24 @@ interface NotificationToast {
 }
 
 interface AppContextType {
+  currentUser: User | null;
+  setCurrentUser: (user: User | null) => void;
+  allUsers: User[];
   activeRole: UserRole;
   setActiveRole: (role: UserRole) => void;
+  loginAsRole: (role: UserRole) => void;
+  registerUser: (userData: Partial<User>) => void;
+  updateUserProfile: (updates: Partial<User>) => void;
+  submitKycDocument: (type: KYCDocument['type'], name: string) => void;
+  logout: () => void;
+
+  // Admin Sovereign Controls
+  adminUpdateUserStatus: (userId: string, newStatus: VerificationStatus, newRole?: UserRole) => void;
+  adminApproveKycDocument: (docId: string, userId: string) => void;
+  adminRejectKycDocument: (docId: string, userId: string, reason?: string) => void;
+  adminReleaseEscrow: (contractId: string) => void;
+  adminRefundEscrow: (contractId: string) => void;
+
   currentCountry: CountryCode;
   setCurrentCountry: (country: CountryCode) => void;
   currentCurrency: CurrencyCode;
@@ -95,7 +116,243 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [activeRole, setActiveRole] = useState<UserRole>('client');
+  const [activeRole, setActiveRoleState] = useState<UserRole>('client');
+  const [currentUser, setCurrentUser] = useState<User | null>(MOCK_USERS['client'] || null);
+  const [allUsers, setAllUsers] = useState<User[]>(Object.values(MOCK_USERS));
+
+  const setActiveRole = (role: UserRole) => {
+    setActiveRoleState(role);
+    if (MOCK_USERS[role]) {
+      setCurrentUser(MOCK_USERS[role]);
+    }
+  };
+
+  const loginAsRole = (role: UserRole) => {
+    setActiveRoleState(role);
+    if (MOCK_USERS[role]) {
+      setCurrentUser(MOCK_USERS[role]);
+      showToast(`Connecté en tant que ${MOCK_USERS[role].name} (${role.toUpperCase()})`, 'success');
+    }
+  };
+
+  const registerUser = (userData: Partial<User>) => {
+    const role = userData.role || 'client';
+    const newUser: User = {
+      id: 'u-' + Math.random().toString(36).substring(2, 8),
+      name: userData.name || 'Nouvel Utilisateur',
+      email: userData.email || '',
+      phone: userData.phone || '',
+      avatar: userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&auto=format&fit=crop&q=80',
+      role: role,
+      country: userData.country || 'GH',
+      city: userData.city || 'Accra',
+      verifiedStatus: userData.verifiedStatus || 'PENDING',
+      joinedDate: 'Oct 2026',
+      bio: userData.bio || '',
+      completionRate: userData.completionRate || 75,
+      trade: userData.trade,
+      companyName: userData.companyName,
+      registrationNumber: userData.registrationNumber,
+      experienceYears: userData.experienceYears,
+      dailyRateGHS: userData.dailyRateGHS,
+      availabilityStatus: userData.availabilityStatus || 'AVAILABLE',
+      address: userData.address,
+      kycDocuments: userData.kycDocuments || [
+        {
+          id: 'doc-' + Math.random().toString(36).substring(2, 6),
+          type: 'ID_CARD',
+          name: 'Pièce d’identité officielle soumise',
+          status: 'PENDING',
+          uploadedAt: new Date().toISOString().split('T')[0]
+        }
+      ]
+    };
+
+    setCurrentUser(newUser);
+    setAllUsers((prev) => [newUser, ...prev]);
+    setActiveRoleState(role);
+    supabaseService.saveUser(newUser);
+    showToast(`Compte créé avec succès ! Bienvenue sur GAB-work, ${newUser.name}.`, 'success');
+  };
+
+  const updateUserProfile = (updates: Partial<User>) => {
+    if (!currentUser) return;
+    const updated = { ...currentUser, ...updates };
+    setCurrentUser(updated);
+    setAllUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+    supabaseService.saveUser(updated);
+    showToast('Profil mis à jour avec succès.', 'success');
+  };
+
+  const submitKycDocument = (type: KYCDocument['type'], name: string) => {
+    if (!currentUser) return;
+    const newDoc: KYCDocument = {
+      id: 'doc-' + Math.random().toString(36).substring(2, 7),
+      type,
+      name,
+      status: 'PENDING',
+      uploadedAt: new Date().toISOString().split('T')[0]
+    };
+    const updatedDocs = [...(currentUser.kycDocuments || []), newDoc];
+    const updatedUser: User = {
+      ...currentUser,
+      kycDocuments: updatedDocs,
+      verifiedStatus: 'PENDING',
+      completionRate: Math.min(100, (currentUser.completionRate || 70) + 15)
+    };
+    setCurrentUser(updatedUser);
+    setAllUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+    supabaseService.saveKycDocument(currentUser.id, newDoc);
+    showToast(`Document "${name}" soumis pour vérification. Statut : En attente.`, 'info');
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    showToast('Vous avez été déconnecté.', 'info');
+  };
+
+  // ADMIN SOVEREIGN CONTROLS
+  const adminUpdateUserStatus = (userId: string, newStatus: VerificationStatus, newRole?: UserRole) => {
+    setAllUsers((prev) =>
+      prev.map((u) => {
+        if (u.id === userId) {
+          return {
+            ...u,
+            verifiedStatus: newStatus,
+            role: newRole || u.role
+          };
+        }
+        return u;
+      })
+    );
+
+    if (currentUser?.id === userId) {
+      setCurrentUser((prev) => (prev ? { ...prev, verifiedStatus: newStatus, role: newRole || prev.role } : null));
+    }
+
+    supabaseService.updateUserStatus(userId, newStatus, newRole);
+
+    const log: AuditLog = {
+      id: 'aud-' + Date.now(),
+      actor: 'Marc Dossou (Admin)',
+      actorRole: 'Admin',
+      action: 'STATUS_UPDATED',
+      resource: `User ID #${userId}`,
+      timestamp: new Date().toISOString(),
+      ipAddress: '197.234.221.14',
+      details: `Admin a défini le statut sur ${newStatus}${newRole ? ` et le rôle sur ${newRole}` : ''}.`
+    };
+    setAuditLogs((prev) => [log, ...prev]);
+    supabaseService.logAuditEvent(log);
+
+    showToast(`Statut de l'utilisateur #${userId} mis à jour : ${newStatus}`, 'success');
+  };
+
+  const adminApproveKycDocument = (docId: string, userId: string) => {
+    setAllUsers((prev) =>
+      prev.map((u) => {
+        if (u.id === userId) {
+          const updatedDocs = (u.kycDocuments || []).map((d) => (d.id === docId ? { ...d, status: 'APPROVED' as const } : d));
+          return {
+            ...u,
+            verifiedStatus: 'VERIFIED' as const,
+            completionRate: 100,
+            kycDocuments: updatedDocs
+          };
+        }
+        return u;
+      })
+    );
+
+    if (currentUser?.id === userId) {
+      setCurrentUser((prev) => {
+        if (!prev) return null;
+        const updatedDocs = (prev.kycDocuments || []).map((d) => (d.id === docId ? { ...d, status: 'APPROVED' as const } : d));
+        return { ...prev, verifiedStatus: 'VERIFIED', completionRate: 100, kycDocuments: updatedDocs };
+      });
+    }
+
+    supabaseService.updateKycDocumentStatus(docId, 'APPROVED');
+
+    const log: AuditLog = {
+      id: 'aud-' + Date.now(),
+      actor: 'Marc Dossou (Admin)',
+      actorRole: 'Admin',
+      action: 'KYC_APPROVED',
+      resource: `KYC Document #${docId}`,
+      timestamp: new Date().toISOString(),
+      ipAddress: '197.234.221.14',
+      details: `Admin a validé le document KYC #${docId} pour l'utilisateur #${userId}. Profil passé à VÉRIFIÉ.`
+    };
+    setAuditLogs((prev) => [log, ...prev]);
+    supabaseService.logAuditEvent(log);
+
+    showToast(`Document #${docId} validé avec succès ! Profil utilisateur certifié.`, 'success');
+  };
+
+  const adminRejectKycDocument = (docId: string, userId: string, reason: string = 'Document non conforme ou illisible') => {
+    setAllUsers((prev) =>
+      prev.map((u) => {
+        if (u.id === userId) {
+          const updatedDocs = (u.kycDocuments || []).map((d) =>
+            d.id === docId ? { ...d, status: 'REJECTED' as const, rejectionReason: reason } : d
+          );
+          return {
+            ...u,
+            verifiedStatus: 'REJECTED' as const,
+            kycDocuments: updatedDocs
+          };
+        }
+        return u;
+      })
+    );
+
+    supabaseService.updateKycDocumentStatus(docId, 'REJECTED', reason);
+    showToast(`Document rejeté : ${reason}`, 'warning');
+  };
+
+  const adminReleaseEscrow = (contractId: string) => {
+    setContracts((prev) =>
+      prev.map((c) => (c.id === contractId ? { ...c, status: 'COMPLETED' as const } : c))
+    );
+
+    const log: AuditLog = {
+      id: 'aud-' + Date.now(),
+      actor: 'Marc Dossou (Admin)',
+      actorRole: 'Admin',
+      action: 'ESCROW_RELEASED',
+      resource: `Contract #${contractId}`,
+      timestamp: new Date().toISOString(),
+      ipAddress: '197.234.221.14',
+      details: `Déblocage manuel des fonds séquestre au prestataire suite à audit concluant.`
+    };
+    setAuditLogs((prev) => [log, ...prev]);
+    supabaseService.logAuditEvent(log);
+
+    showToast(`Fonds séquestre débloqués avec succès pour le contrat #${contractId} !`, 'success');
+  };
+
+  const adminRefundEscrow = (contractId: string) => {
+    setContracts((prev) =>
+      prev.map((c) => (c.id === contractId ? { ...c, status: 'CANCELLED' as const } : c))
+    );
+
+    const log: AuditLog = {
+      id: 'aud-' + Date.now(),
+      actor: 'Marc Dossou (Admin)',
+      actorRole: 'Admin',
+      action: 'ESCROW_REFUNDED',
+      resource: `Contract #${contractId}`,
+      timestamp: new Date().toISOString(),
+      ipAddress: '197.234.221.14',
+      details: `Remboursement intégral des fonds séquestre au client suite à annulation / arbitrage.`
+    };
+    setAuditLogs((prev) => [log, ...prev]);
+    supabaseService.logAuditEvent(log);
+
+    showToast(`Fonds séquestre remboursés intégralement au client (Contrat #${contractId})`, 'info');
+  };
+
   const [currentCountry, setCurrentCountry] = useState<CountryCode>('GH');
   const [currentCurrency, setCurrentCurrency] = useState<CurrencyCode>('GHS');
   const [currentLanguage, setCurrentLanguageState] = useState<LanguageCode>('fr'); // Default to French for user request or EN
@@ -243,8 +500,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AppContext.Provider
       value={{
+        currentUser,
+        setCurrentUser,
+        allUsers,
         activeRole,
         setActiveRole,
+        loginAsRole,
+        registerUser,
+        updateUserProfile,
+        submitKycDocument,
+        logout,
+        adminUpdateUserStatus,
+        adminApproveKycDocument,
+        adminRejectKycDocument,
+        adminReleaseEscrow,
+        adminRefundEscrow,
         currentCountry,
         setCurrentCountry,
         currentCurrency,

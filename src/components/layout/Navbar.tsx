@@ -20,16 +20,19 @@ import {
   FileText,
   ShieldCheck,
   MessageSquare,
-  HelpCircle
+  HelpCircle,
+  User as UserIcon,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
-  const { activeRole, setIsCreateProjectModalOpen, t } = useApp();
+  const { activeRole, currentUser, setIsCreateProjectModalOpen, t } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: '/', label: 'Home', icon: Building2 },
+    { href: '/', label: t.home, icon: Building2 },
     { href: '/jobs', label: t.findJobs, icon: Briefcase },
     { href: '/workers', label: t.findWorkers, icon: Users },
     { href: '/services', label: t.services, icon: Building2 },
@@ -112,7 +115,50 @@ export const Navbar: React.FC = () => {
             </nav>
 
             {/* Action CTAs */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2.5">
+              {currentUser ? (
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors"
+                  title="Mon Profil & Statut"
+                >
+                  <div className="relative">
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      className="w-7 h-7 rounded-full object-cover border border-slate-300"
+                    />
+                    <span
+                      className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${
+                        currentUser.verifiedStatus === 'VERIFIED' ? 'bg-[#16805C]' : 'bg-[#D97706]'
+                      }`}
+                    />
+                  </div>
+                  <div className="text-left text-xs leading-tight">
+                    <div className="font-bold text-[#17212B] truncate max-w-[110px]">
+                      {currentUser.name.split(' ')[0]}
+                    </div>
+                    <div className="text-[10px] text-[#245A7A] uppercase font-bold">
+                      {currentUser.role}
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="gap-1 text-xs">
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>{t.login}</span>
+                  </Button>
+                </Link>
+              )}
+
+              <Link href="/register">
+                <Button variant="outline" size="sm" className="gap-1 text-xs">
+                  <UserPlus className="w-3.5 h-3.5 text-[#17324D]" />
+                  <span>{t.register}</span>
+                </Button>
+              </Link>
+
               <Link href={getDashboardHref()}>
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs">
                   <LayoutDashboard className="w-3.5 h-3.5 text-[#17324D]" />
@@ -133,6 +179,18 @@ export const Navbar: React.FC = () => {
 
             {/* Mobile Actions Header */}
             <div className="flex xl:hidden items-center gap-1.5">
+              <Link href="/profile" className="p-1.5 rounded-md hover:bg-slate-100" title="Mon Profil">
+                {currentUser ? (
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name}
+                    className="w-7 h-7 rounded-full object-cover border border-slate-300"
+                  />
+                ) : (
+                  <UserIcon className="w-5 h-5 text-[#17324D]" />
+                )}
+              </Link>
+
               <Link href={getDashboardHref()} className="sm:hidden p-2 text-[#17324D] hover:bg-slate-100 rounded-md">
                 <LayoutDashboard className="w-5 h-5" />
               </Link>
@@ -186,6 +244,28 @@ export const Navbar: React.FC = () => {
 
             {/* Quick Actions Buttons */}
             <div className="pt-2 flex flex-col gap-2">
+              <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" fullWidth className="gap-2 text-xs py-2.5 bg-slate-50 border-slate-300">
+                  <UserIcon className="w-4 h-4 text-[#17324D]" />
+                  <span>{t.myProfile} ({currentUser?.name.split(' ')[0] || 'Utilisateur'})</span>
+                </Button>
+              </Link>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" fullWidth className="gap-1.5 text-xs py-2">
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>{t.login}</span>
+                  </Button>
+                </Link>
+                <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" fullWidth className="gap-1.5 text-xs py-2 border-[#17324D] text-[#17324D] font-bold">
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>{t.register}</span>
+                  </Button>
+                </Link>
+              </div>
+
               <Link href={getDashboardHref()} onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="outline" fullWidth className="gap-2 text-xs py-2.5">
                   <LayoutDashboard className="w-4 h-4 text-[#17324D]" />

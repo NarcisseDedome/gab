@@ -2,7 +2,7 @@ export type UserRole = 'client' | 'worker' | 'company' | 'sitemanager' | 'admin'
 
 export type AvailabilityStatus = 'AVAILABLE' | 'PENDING' | 'UNAVAILABLE' | 'DISPUTE';
 
-export type VerificationStatus = 'VERIFIED' | 'PENDING' | 'REJECTED' | 'ADDITIONAL_INFO_REQUIRED';
+export type VerificationStatus = 'VERIFIED' | 'PENDING' | 'REJECTED' | 'ADDITIONAL_INFO_REQUIRED' | 'UNVERIFIED';
 
 export type ContractStatus = 'DRAFT' | 'NEGOTIATION' | 'PENDING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DISPUTED';
 
@@ -11,6 +11,16 @@ export type DisputeStatus = 'OPEN' | 'UNDER_REVIEW' | 'INFORMATION_REQUIRED' | '
 export type CountryCode = 'GH' | 'NG' | 'BJ' | 'TG' | 'CI' | 'BF' | 'SN' | 'CM' | 'INT';
 
 export type CurrencyCode = 'GHS' | 'XOF' | 'NGN' | 'USD' | 'EUR';
+
+export interface KYCDocument {
+  id: string;
+  type: 'ID_CARD' | 'PASSPORT' | 'BUSINESS_REGISTRATION' | 'TRADE_CERTIFICATE' | 'INSURANCE' | 'OTHER';
+  name: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  fileUrl?: string;
+  uploadedAt: string;
+  rejectionReason?: string;
+}
 
 export interface User {
   id: string;
@@ -23,6 +33,17 @@ export interface User {
   city: string;
   verifiedStatus: VerificationStatus;
   joinedDate: string;
+  bio?: string;
+  completionRate?: number;
+  trade?: string;
+  companyName?: string;
+  registrationNumber?: string;
+  experienceYears?: number;
+  dailyRateGHS?: number;
+  availabilityStatus?: AvailabilityStatus;
+  kycDocuments?: KYCDocument[];
+  website?: string;
+  address?: string;
 }
 
 export interface Skill {

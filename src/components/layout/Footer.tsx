@@ -60,9 +60,9 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2.5 text-sm text-slate-300">
               <li><Link href="/how-it-works" className="hover:text-white transition-colors">{t.howItWorks}</Link></li>
               <li><Link href="/trust-safety" className="hover:text-white transition-colors">{t.trustSafety}</Link></li>
-              <li><Link href="/verification" className="hover:text-white transition-colors">Verification Center</Link></li>
-              <li><Link href="/disputes" className="hover:text-white transition-colors">Resolution Center</Link></li>
-              <li><Link href="/payments" className="hover:text-white transition-colors">Escrow & Commissions</Link></li>
+              <li><Link href="/verification" className="hover:text-white transition-colors">{t.verificationCenter}</Link></li>
+              <li><Link href="/disputes" className="hover:text-white transition-colors">{t.resolutionCenter}</Link></li>
+              <li><Link href="/payments" className="hover:text-white transition-colors">{t.escrowAndFees}</Link></li>
             </ul>
           </div>
 
@@ -98,9 +98,9 @@ export const Footer: React.FC = () => {
             © 2026 GAB-work Ltd. {t.copyright}
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/trust-safety" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="/trust-safety" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/trust-safety" className="hover:text-white transition-colors">Security Audit</Link>
+            <Link href="/trust-safety" className="hover:text-white transition-colors">{t.termsOfService}</Link>
+            <Link href="/trust-safety" className="hover:text-white transition-colors">{t.privacyPolicy}</Link>
+            <Link href="/trust-safety" className="hover:text-white transition-colors">{t.securityAudit}</Link>
           </div>
         </div>
 

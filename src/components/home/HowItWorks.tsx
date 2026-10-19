@@ -68,7 +68,7 @@ export const HowItWorks: React.FC = () => {
                   <p className="text-xs text-[#64748B] leading-relaxed">{step.description}</p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] font-semibold text-[#245A7A] flex items-center gap-1">
-                  <span>Step {step.number} Verified</span>
+                  <span>{t.stepVerified} {step.number}</span>
                   <span>✓</span>
                 </div>
               </div>

@@ -113,7 +113,7 @@ export const TrustSection: React.FC = () => {
                 </div>
 
                 <p className="text-[11px] text-slate-400 font-light italic">
-                  * Platform fees cover escrow custody, site verification support, dispute arbitration, and digital contract execution.
+                  {t.platformFeesNote}
                 </p>
               </div>
 
@@ -123,8 +123,8 @@ export const TrustSection: React.FC = () => {
                   <span className="text-slate-300">{t.escrowVolume}</span>
                 </div>
                 <div className="p-3 rounded-lg bg-[#17324D]/60 border border-white/10">
-                  <span className="block text-xl font-bold text-[#16805C]">0% Fraud</span>
-                  <span className="text-slate-300">Milestone Dispute Rate &lt; 0.2%</span>
+                  <span className="block text-xl font-bold text-[#16805C]">{t.zeroFraud}</span>
+                  <span className="text-slate-300">{t.disputeRateLow}</span>
                 </div>
               </div>
 
