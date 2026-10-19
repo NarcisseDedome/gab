@@ -6,7 +6,8 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'demo-anon-
 export const isSupabaseConfigured = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && 
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('demo-gabwork')
+  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('demo-gabwork') &&
+  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
 );
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
